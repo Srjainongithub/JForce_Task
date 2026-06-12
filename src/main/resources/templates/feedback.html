@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Feedback System</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+        .card { background: white; padding: 35px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); width: 100%; max-width: 600px; text-align: center; box-sizing: border-box; }
+        .dashboard-card { max-width: 850px; }
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 25px; border: 1px solid #ccc; background: #e0e0e0; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .active-tab { background: #cccccc; border: 1px solid #999; color: black; }
+        textarea { width: 100%; height: 130px; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; resize: none; font-size: 14px; }
+        .submit-btn { width: 100%; padding: 12px; background: #cccccc; color: black; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .submit-btn:hover { background: #b5b5b5; }
+        
+        h2 { color: #333; margin-top: 0; margin-bottom: 25px; font-size: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th, td { border: 1px solid #dddddd; padding: 14px; text-align: left; vertical-align: middle; font-size: 14px; }
+        th { background-color: #f2f2f2; color: #333; font-weight: bold; }
+        
+        /* Action Buttons styling as per template */
+        .btn-action { padding: 6px 14px; margin-right: 5px; border: 1px solid #ccc; background: #e0e0e0; color: black; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-block; cursor: pointer; }
+        .btn-action:hover { background: #d4d4d4; }
+        
+        .logout-link { margin-top: 25px; display: inline-block; color: blue; text-decoration: underline; font-size: 15px; font-weight: bold; }
+    </style>
+    <script>
+        // View button par alert popup mein feedback dikhane ke liye function
+        function viewFeedback(text) {
+            alert("Feedback Detail:\n\n" + text);
+        }
+    </script>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Feedback</h2>
+        <div class="btn-group">
+            <button class="tab-btn active-tab" th:text="${editingFeedback.id != null} ? 'Edit Feedback' : 'Add Feedback'"></button>
+            <button class="tab-btn" style="background: #f0f0f0; color: #888;" th:if="${editingFeedback.id == null}">Edit Feedback</button>
+        </div>
+
+        <form action="/feedback/save" method="POST" th:object="${editingFeedback}">
+            <input type="hidden" th:field="*{id}" />
+            <div style="text-align: left; font-weight: bold; color: #444; font-size: 14px;">Your Feedback:</div>
+            <textarea th:field="*{feedbackText}" placeholder="Write your feedback here..." required></textarea>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <div class="card dashboard-card">
+        <h2>Admin Feedback Dashboard</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50px;">ID</th>
+                    <th>Feedback</th>
+                    <th style="width: 110px;">Date</th>
+                    <th style="width: 220px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="fb : ${feedbacks}">
+                    <td th:text="${fb.id}"></td>
+                    <td th:text="${fb.feedbackText}"></td>
+                    <td th:text="${fb.date}"></td>
+                    <td>
+                        <button class="btn-action" th:onclick="viewFeedback([[${fb.feedbackText}]])">View</button>
+                        <a th:href="@{'/feedback/edit/' + ${fb.id}}" class="btn-action">Edit</a>
+                        <a th:href="@{'/feedback/delete/' + ${fb.id}}" class="btn-action" onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <a href="/login" class="logout-link">Log Out</a>
+    </div>
+
+</body>
+</html>
