@@ -55,3 +55,14 @@ spring.datasource.password=YOUR_MYSQL_PASSWORD
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 
+
+
+Run the Spring Boot application using Maven:
+
+Terminal:
+./mvnw spring-boot:run
+Access the application in your browser at:
+
+Registration: http://localhost:8081/register
+
+Login: http://localhost:8081/login
